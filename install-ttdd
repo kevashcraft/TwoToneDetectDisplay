@@ -22,3 +22,7 @@ fi
 if ! grep display_rotate=1 /boot/config.txt; then
 	echo "display_rotate=1" >> /boot/config.txt
 fi
+
+#disable monitor sleep
+sed -i 's/BLANK_TIME=30/BLANK_TIME=0/' /etc/kbd/config
+sed -i 's/POWERDOWN_TIME=30/POWERDOWN_TIME=0/' /etc/kbd/config

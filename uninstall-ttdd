@@ -16,3 +16,8 @@ sed -i "s/\/usr\/local\/bin\/ttdd//" /home/pi/.bashrc
 
 #reset screen rotation
 sed -i "s/display_rotate=1//" /boot/config.txt
+
+#enable monitor sleep 
+sed -i 's/BLANK_TIME=0/BLANK_TIME=30/' /etc/kbd/config 
+sed -i 's/POWERDOWN_TIME=0/POWERDOWN_TIME=30/' /etc/kbd/config 
+
