@@ -5,6 +5,11 @@ Displays call date and times that have been recorded by TwoToneDetect
 ###Install the program by running ./install-ttdd as root  
 this will configure the Raspberry Pi to auto-login, increase the display size, and run the program at boot.  
 it will also copy the bash script into the /usr/local/bin directory named ttdd  
+####Example Install
+cd ~  
+git clone git clone https://github.com/kevashcraft/TwoToneDetectDisplay.git  
+cd TwoToneDetectDisplay  
+sudo ./install-ttdd  
 
 ###Uninstall the program by running ./uninstall-ttdd as root  
 
