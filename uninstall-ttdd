@@ -1,0 +1,18 @@
+#!/bin/sh
+#uninstalls the ttd_display
+
+#remove autologin
+sed -i 's/1:2345:respawn:\/bin\/login -f pi tty1 <\/dev\/tty1 >\/dev\/tty1 2>\&1/1:2345:respawn:\/sbin\/getty 115200 tty1/' /etc/inittab
+
+#reset fontsize
+sed -i 's/FONTFACE="Terminus"/FONTFACE=""/' /etc/default/console-setup
+sed -i 's/FONTSIZE="16x32"/FONTSIZE=""/' /etc/default/console-setup
+
+#remove bin file
+rm -f /usr/local/bin/ttdd
+
+#disable autoload
+sed -i "s/\/usr\/local\/bin\/ttdd//" /home/pi/.bashrc
+
+#reset screen rotation
+sed -i "s/display_rotate=1//" /boot/config.txt

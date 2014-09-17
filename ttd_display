@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# Name: ttd_display
+# Description: bash script to display the dates of the recent calls detected by TwoToneDetect
+# Created by: Kevin Ashcraft (@kevashcraft)
+# Created on: 2014-09-17 
+# ---------------------------------------------------------------------------------
+
+#
+# SETTINGS
+#
+#  - Colors
+#
+		C1=4		# color of group one [0-7]
+		C2=5		# color of group two [0-7]
+#
+#  - Grouping
+#
+		GRPN=300  # number of seconds to group items by
+
+
+
+# set screen width and hight
+_COLUMNS=$(tput cols)
+_LINES=$(tput lines)
+
+# fint most recent call
+MOSTRECENT=`ls -r /home/pi/TTD/audio/ | head -1` 
+NEWTEST=""
+
+# hide the cursor
+tput civis
+
+# set rumber of lines to output -- total screen height minus 13 lines
+TLINES=$(($_LINES -13))
+
+# do a loop until 42
+while true; do
+	# print the times if the most recent file is new
+	if [ "$MOSTRECENT" != "$NEWTEST" ]; then
+		# set initial color group
+		COLOR=1
+		# empty previous
+		PREVIOUS=""
+		# clear screen
+		tput clear
+		# set initial position
+		x=8
+		# loop though the files
+		for FNAME in `ls -r /home/pi/TTD/audio/*.mp3 | head -$TLINES`; do
+			# extract the date
+			RAWDATE=`echo $FNAME | sed 's/.*BVA_Page_\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)\([0-9]\{2\}\)_\([0-9]\{2\}\)_\([0-9]\{2\}\)_.*.mp3/\1-\2-\3 \4:\5:\6/'`
+			# skip check if first in list
+			if [ "$PREVIOUS" != "" ]; then
+				# add group seconds to item date then check if in group
+				MYDATE=`date -d "$RAWDATE $GRPN seconds" +%s`
+				# change colors if date is not recent
+				if [ $MYDATE -lt $PREVIOUS ]; then
+					if [ $COLOR -eq 1 ]; then
+						COLOR=0
+					else
+						COLOR=1
+					fi
+				fi
+			   # check which color group is active	
+				if [ $COLOR -eq 1 ]; then
+					# sets tput text color one
+					tput setab $C1
+				else
+					# sets tput text color two
+					tput setab $C2
+				fi
+			else
+				# set initial text color
+				tput setab $C1
+			fi
+			PREVIOUS=`date -d "$RAWDATE" +%s`
+			MESSAGE=`echo $FNAME | sed 's/.*BVA_Page_\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)\([0-9]\{2\}\)_\([0-9]\{2\}\)_\([0-9]\{2\}\)_.*.mp3/\1 \2\/\3 \4:\5:\6/'`
+			y=$(( ( $_COLUMNS - 19 )  / 2 ))
+			tput cup $x $y
+			echo $MESSAGE
+			x=$(( $x +1 ))
+		done
+		MOSTRECENT=`ls -r /home/pi/TTD/audio/ | head -1`
+	fi
+	NEWTEST=`ls -r /home/pi/TTD/audio/ | head -1`
+	# clear tput settings
+	tput sgr0
+	# go to top of screen
+	tput cup 0 0
+	# print the current date
+	echo -n `date`
+	# go to top right
+	tput cup 0 $(($_COLUMNS - 12))
+	# print program name
+	echo -n "BVA Page Log"
+	# take a break, you've earned it
+	sleep 1;
+done

@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+#Installs the ttd_display
+#
+
+#autologin after reboot
+sed -i 's/1:2345:respawn:\/sbin\/getty 115200 tty1/1:2345:respawn:\/bin\/login -f pi tty1 <\/dev\/tty1 >\/dev\/tty1 2>\&1/' /etc/inittab
+
+#increase fontsize
+sed -i 's/FONTFACE=""/FONTFACE="Terminus"/' /etc/default/console-setup
+sed -i 's/FONTSIZE=""/FONTSIZE="16x32"/' /etc/default/console-setup
+
+#copy file into bin
+cp -f ttd_display /usr/local/bin/ttdd
+
+#autoload file
+if ! grep /usr/local/bin/ttdd /home/pi/.bashrc; then
+		echo "/usr/local/bin/ttdd" >> /home/pi/.bashrc
+fi
+
+#rotate the display
+if ! grep display_rotate=1 /boot/config.txt; then
+	echo "display_rotate=1" >> /boot/config.txt
+fi
