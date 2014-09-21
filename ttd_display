@@ -47,7 +47,7 @@ while true; do
 		# set initial position
 		x=8
 		# loop though the files
-		for FNAME in `ls -r /home/pi/TTD/audio/*.mp3 | head -$TLINES`; do
+		for FNAME in `ls -r /home/pi/TTD/audio/*.mp3 | grep BVA_Page | head -$TLINES`; do
 			# extract the date
 			RAWDATE=`echo $FNAME | sed 's/.*BVA_Page_\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)\([0-9]\{2\}\)_\([0-9]\{2\}\)_\([0-9]\{2\}\)_.*.mp3/\1-\2-\3 \4:\5:\6/'`
 			# skip check if first in list
